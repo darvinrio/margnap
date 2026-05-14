@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Deep analysis of what each detector actually matches on the sample text."""
 
-from detectors import (
 from pathlib import Path
+
+from detectors import (
     find_ai_phrases, find_triads, find_markdown,
     find_bullet_lists, find_em_dashes,
 )

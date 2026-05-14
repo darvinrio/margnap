@@ -4,8 +4,9 @@ Final analysis: How easy is it to detect each Pangram signal via regex/heuristic
 Tests against sample_text.txt (~1003 words, AI-generated DBT article).
 """
 
-from detectors import (
 from pathlib import Path
+
+from detectors import (
     find_em_dashes,
     find_not_but_also,
     find_triads,
