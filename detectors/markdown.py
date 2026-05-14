@@ -18,11 +18,6 @@ import re
 from dataclasses import dataclass
 
 
-@dataclass
-class MarkdownSignal:
-    variant: str
-    count: int
-
 
 def find_markdown(text: str) -> tuple[int, list[tuple[str, list[list[int]]]]]:
     """
@@ -53,7 +48,8 @@ def find_markdown(text: str) -> tuple[int, list[tuple[str, list[list[int]]]]]:
         signals['inline_code'] = spans
 
     # Italic: single *text* (but not inside **bold**)
-    italic = re.finditer(r'(?<!\*)\*(?!\*)(\w[\w\s\w]*?\w)(?<!\w)\*(?!\*)', text)
+    # Fixed: removed contradictory (?<!\w) lookbehind that prevented matching
+    italic = re.finditer(r'(?<!\*)\*(?!\*)(\w[\w\s]*?\w)(?!\w)\*', text)
     spans = [list(m.span()) for m in italic]
     if spans:
         signals['italic'] = spans
@@ -61,3 +57,4 @@ def find_markdown(text: str) -> tuple[int, list[tuple[str, list[list[int]]]]]:
     total = sum(len(v) for v in signals.values())
     signal_list = [(name, spans) for name, spans in signals.items()]
     return total, signal_list
+

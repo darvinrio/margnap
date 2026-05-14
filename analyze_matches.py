@@ -2,11 +2,12 @@
 """Deep analysis of what each detector actually matches on the sample text."""
 
 from detectors import (
+from pathlib import Path
     find_ai_phrases, find_triads, find_markdown,
     find_bullet_lists, find_em_dashes,
 )
 
-with open("/opt/data/home/margnap/sample_text.txt") as f:
+with open(Path(__file__).parent / "sample_text.txt") as f:
     text = f.read()
 
 # === AI PHRASES ===

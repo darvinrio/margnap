@@ -5,6 +5,7 @@ Tests against sample_text.txt (~1003 words, AI-generated DBT article).
 """
 
 from detectors import (
+from pathlib import Path
     find_em_dashes,
     find_not_but_also,
     find_triads,
@@ -16,7 +17,7 @@ from detectors import (
     find_emojis,
 )
 
-with open("/opt/data/home/margnap/sample_text.txt") as f:
+with open(Path(__file__).parent / "sample_text.txt") as f:
     text = f.read()
 
 words = len(text.split())

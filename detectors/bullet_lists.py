@@ -22,13 +22,35 @@ Detection approach:
 """
 
 import re
-from dataclasses import dataclass
 
 
-@dataclass
-class ListSignal:
-    variant: str  # "bullets" or "numbered"
-    spans: list[list[int]]
+def _consecutive_lines(spans: list[list[int]], text: str, min_consecutive: int = 2) -> list[list[int]]:
+    """Filter spans to keep only those belonging to runs of ≥min_consecutive consecutive lines."""
+    if not spans:
+        return []
+
+    # Compute line number for each span (0-based)
+    spans_with_lines = [(span, text[: span[0]].count('\n')) for span in spans]
+    # Sort by line number
+    spans_with_lines.sort(key=lambda x: x[1])
+
+    filtered: list[list[int]] = []
+    current_group: list[list[int]] = []
+    prev_line: int | None = None
+
+    for span, line in spans_with_lines:
+        if prev_line is not None and line == prev_line + 1:
+            current_group.append(span)
+        else:
+            if len(current_group) >= min_consecutive:
+                filtered.extend(current_group)
+            current_group = [span]
+        prev_line = line
+
+    if len(current_group) >= min_consecutive:
+        filtered.extend(current_group)
+
+    return filtered
 
 
 def find_bullet_lists(text: str) -> tuple[int, list[tuple[str, list[list[int]]]]]:
@@ -46,6 +68,8 @@ def find_bullet_lists(text: str) -> tuple[int, list[tuple[str, list[list[int]]]]
         r'^[\s]*[-*+•]\s+\S.*$', text, re.MULTILINE
     )
     spans = [list(m.span()) for m in unordered]
+    # Filter: require at least 2 consecutive list-marker lines to reduce false positives
+    spans = _consecutive_lines(spans, text, min_consecutive=2)
     if spans:
         signals['unordered'] = spans
 
@@ -54,6 +78,7 @@ def find_bullet_lists(text: str) -> tuple[int, list[tuple[str, list[list[int]]]]
         r'^[\s]*\d+\.\s+\S.*$', text, re.MULTILINE
     )
     spans = [list(m.span()) for m in numbered]
+    spans = _consecutive_lines(spans, text, min_consecutive=2)
     if spans:
         signals['numbered'] = spans
 

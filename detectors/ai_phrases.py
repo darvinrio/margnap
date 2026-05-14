@@ -110,12 +110,17 @@ def find_ai_phrases(text: str) -> tuple[int, list[list[int]]]:
     Returns:
         (match_count, list_of_spans)
     """
+    # Normalize apostrophes: convert curly apostrophe (U+2019) to straight ASCII '
+    # AI tools often produce curly apostrophes, while our phrase list uses ASCII.
+    text = text.replace('\u2019', "'")
+
     # Build a single pattern from all phrases.
     # Escape each phrase for safe regex inclusion.
     escaped = [re.escape(p) for p in AI_PHRASES]
     # Sort longest first to avoid partial matches
     escaped.sort(key=len, reverse=True)
-    pattern = re.compile("|".join(escaped), re.IGNORECASE)
+    # Wrap with word boundaries to avoid partial-word false positives
+    pattern = re.compile(r'\b(?:' + "|".join(escaped) + r')\b', re.IGNORECASE)
 
     spans = [list(m.span()) for m in pattern.finditer(text)]
     return len(spans), spans

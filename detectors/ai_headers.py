@@ -39,12 +39,12 @@ def find_ai_headers(text: str) -> tuple[int, list[list[int]], list[str]]:
     # These are typically at the START of a response, followed by a colon/dash
     AI_HEADER_PATTERNS = [
         r'^(?:Certainly|Of\s+course|Sure|Sure\s+thing|Happy\s+to\s+help|Great\s+question|Absolutely|I\'d\s+be\s+happy\s+to|I\'m\s+happy\s+to|Let\s+me\s+help\s+you|I\'d\s+be\s+glad\s+to|It\'s\s+my\s+pleasure)\b.*?(?::|—|-)',
-        r"^Here\'(?:s|s)\s+(?:a|an)\s+(?:breakdown|overview|summary|list|explanation|answer|response)",
-        r"I?\s+can\s+help\s+you\s+with\s+that\s*(?:by\s+(?:providing|explaining|showing))?.*?[:—-]",
-        r"To\s+(?:answer|explain|describe|summarize)\s+(?:your\s+)?question\s*(?:about)?\s*,?\s*(?:I?\s+will|here|let|\b(?:be|start|go))",
-        r"Thank\s+you\s+for\s+(?:asking|your\s+(?:question|query|interest)).*?[:—-]",
-        r"No\s+problem!\s*(?:here|I?|let).*?[:—-]",
-        r"You\s+got\s+it!\s*(?:here|I?|let).*?[:—-]",
+        r"^Here's\s+(?:a|an)\s+(?:breakdown|overview|summary|list|explanation|answer|response)",
+        r"^I\s+can\s+help\s+you\s+with\s+that\s*(?:by\s+(?:providing|explaining|showing))?.*?[:—-]",
+        r"^To\s+(?:answer|explain|describe|summarize)\s+(?:your\s+)?question\s*(?:about)?\s*,?\s*(?:I?\s+will|here|let|\b(?:be|start|go))",
+        r"^Thank\s+you\s+for\s+(?:asking|your\s+(?:question|query|interest)).*?[:—-]",
+        r"^No\s+problem!\s*(?:here|I?|let).*?[:—-]",
+        r"^You\s+got\s+it!\s*(?:here|I?|let).*?[:—-]",
     ]
 
     combined_pattern = '|'.join(AI_HEADER_PATTERNS)

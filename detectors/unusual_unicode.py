@@ -35,7 +35,7 @@ def find_unusual_unicode(text: str) -> tuple[int, list[list[int]], list[tuple[st
     # These are characters you can't type from a standard keyboard
     UNUSUAL_CHARS = {
         '\u2500': 'box drawings light horizontal',      # ─
-        '\u2501': 'box drawings light double',           # ━
+        '\u2501': 'BOX DRAWINGS HEAVY HORIZONTAL',      # ━
         '\u2502': 'box drawings light vertical',         # │
         '\u250c': 'box drawings light down and right',   # ┌
         '\u2510': 'box drawings light down and left',    # ┐
@@ -78,17 +78,17 @@ def find_unusual_unicode(text: str) -> tuple[int, list[list[int]], list[tuple[st
         '\u2717': 'heavy multiplication x',              # ✗
         '\u271c': 'ballot x',                            # ✜
         '\u2720': 'cross mark',                          # ✠
-        '\u2736': 'white trident contour',               # ❶
-        '\u2740': 'easy key',                            # ❀
-        '\u2757': 'exclamation mark',                    # ‼
+        '\u2736': 'SIX POINTED BLACK STAR',              # ✶
+        '\u2740': 'WHITE FLORETTE',                      # ❀
+        '\u2757': 'HEAVY EXCLAMATION MARK SYMBOL',      # ❗
         '\u2763': 'heavy heart exclamation',             # ❣
         '\u2764': 'heavy black heart',                   # ❤
-        '\u2776': 'dotted circle',                       # ❶
-        '\u2777': 'dotted circle',                       # ❷
+        '\u2776': 'DINGBAT NEGATIVE CIRCLED DIGIT ONE', # ❶
+        '\u2777': 'DINGBAT NEGATIVE CIRCLED DIGIT TWO', # ❷
         '\u2981': 'z notation spot',                     # ⦁
         '\u3008': 'left angle bracket',                  # 〈
         '\u3009': 'right angle bracket',                 # 〉
-        '\u3013': 'geta mark',                           # ︓
+        '\u3013': 'geta mark',                           # 〓
         '\uff01': 'fullwidth exclamation mark',          # ！
         '\uff02': 'fullwidth double quotation mark',     # ＂
         '\uff03': 'fullwidth number sign',               # ＃
@@ -117,17 +117,27 @@ def find_unusual_unicode(text: str) -> tuple[int, list[list[int]], list[tuple[st
         '\uff3e': 'fullwidth circumflex accent',         # ＾
         '\uff3f': 'fullwidth low line',                  # ＿
         '\uff40': 'fullwidth grave accent',              # ｀
-        '\uff5b': 'fullwidth left curly bracket',        # ［
+        '\uff5b': 'fullwidth left curly bracket',        # ｛
         '\uff5c': 'fullwidth vertical line',             # ｜
-        '\uff5d': 'fullwidth right curly bracket',       # ］
-        '\uff5e': 'fullwidth tilted double hyphen',      # ～
+        '\uff5d': 'fullwidth right curly bracket',       # ｝
+        '\uff5e': 'FULLWIDTH TILDE',                     # ～
     }
 
-    spans = []
-    matched = []
-    for char, name in UNUSUAL_CHARS.items():
-        for m in re.finditer(re.escape(char), text):
-            spans.append(list(m.span()))
-            matched.append((char, name))
+    # Detect CJK script presence to gate fullwidth ASCII false positives
+    has_cjk = bool(re.search(r'[一-鿿]', text))
 
-    return len(spans), sorted(spans), matched
+    # Collect span/name pairs so we can sort spans and keep names aligned
+    entries: list[tuple[list[int], tuple[str, str]]] = []
+    for char, name in UNUSUAL_CHARS.items():
+        # Skip fullwidth ASCII punctuation when CJK text is present (legitimate usage)
+        if has_cjk and '！' <= char <= '～':
+            continue
+        for m in re.finditer(re.escape(char), text):
+            entries.append((list(m.span()), (char, name)))
+
+    # Sort by span start index so the returned lists stay aligned
+    entries.sort(key=lambda x: x[0])
+    spans_sorted = [span for span, _ in entries]
+    matched_sorted = [char_name for _, char_name in entries]
+
+    return len(spans_sorted), spans_sorted, matched_sorted

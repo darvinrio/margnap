@@ -16,7 +16,7 @@ from detectors import (
 )
 
 
-def run_all_detectors() -> dict:
+def run_all_detectors() -> tuple[str, dict]:
     """Run all detectors and return results."""
     with open("sample_text.txt") as f:
         text = f.read()
@@ -69,7 +69,7 @@ def run_all_detectors() -> dict:
 def print_results(text: str, results: dict) -> None:
     """Pretty-print all detection results."""
     word_count = len(text.split())
-    print(f"=== Pangram Supporting Evidence Detection ===")
+    print("=== Pangram Supporting Evidence Detection ===")
     print(f"Text length: {len(text)} chars, ~{word_count} words\n")
 
     for name, data in results.items():
@@ -83,7 +83,7 @@ def print_results(text: str, results: dict) -> None:
                     context = context.replace("\n", "\\n")
                     print(f"    [{start}:{end}] ...{context}...")
             if "char_names" in data and data["char_names"]:
-                print(f"  Characters found:")
+                print("  Characters found:")
                 for ch, name in data["char_names"][:5]:
                     print(f"    U+{ord(ch):04X} ({ch}) = {name}")
         elif "total" in data:
@@ -106,10 +106,11 @@ def print_results(text: str, results: dict) -> None:
 
         # Calculate per 10k words
         per_10k = 0
-        if "count" in data:
-            per_10k = (data["count"] / word_count) * 10000
-        elif "total" in data:
-            per_10k = (data["total"] / word_count) * 10000
+        if word_count > 0:
+            if "count" in data:
+                per_10k = (data["count"] / word_count) * 10000
+            elif "total" in data:
+                per_10k = (data["total"] / word_count) * 10000
         print(f"  Rate: {per_10k:.1f} per 10k words\n")
 
 
