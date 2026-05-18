@@ -66,6 +66,20 @@ AI_PHRASES: list[tuple[str, int | None]] = [
 ]
 
 
+def _phrase_to_regex(phrase: str) -> str:
+    """
+    Convert a phrase to a regex pattern that matches it as a whole word.
+
+    Args:
+        phrase (str): The phrase to convert.
+
+    Returns:
+        str: The regex pattern.
+    """
+    words = phrase.split()
+    return r"\b" + r"(?:\W|_)+".join(re.escape(w) for w in words) + r"\b"
+
+
 def find_ai_phrases(text: str) -> tuple[int, list[list[int]]]:
     """
     Find AI phrases in the given text.
@@ -81,7 +95,10 @@ def find_ai_phrases(text: str) -> tuple[int, list[list[int]]]:
         - a list of their spans.
     """
     phrases = [phrase for phrase, _ in AI_PHRASES]
-    pattern = re.compile(r"\b(?:" + "|".join(phrases) + r")\b", re.IGNORECASE)
+
+    pattern = re.compile(
+        r"(?:" + "|".join(_phrase_to_regex(p) for p in phrases) + r")", re.IGNORECASE
+    )
 
     spans = [list(match.span()) for match in pattern.finditer(text)]
     return len(spans), spans
