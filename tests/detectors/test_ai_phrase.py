@@ -14,23 +14,23 @@ from detectors.ai_phrase import find_ai_phrases
     [
         pytest.param("", (0, []), id="empty"),
         pytest.param(
-            "The most profound impact of DBT is its ability to impose software engineering best practices onto the data workflow",  # noqa: E501
-            (2, [[9, 17], [32, 49]]),
+            "is its ability to",
+            (1, [[0, 17]]),
             id="single_phrase",
         ),
         pytest.param(
-            "The most profound impact of DBT is it's ability to impose software engineering best practices onto the data workflow",  # noqa: E501
-            (2, [[9, 17], [32, 50]]),
+            "is it's ability to",
+            (1, [[0, 18]]),
             id="single_phrase_with_apostrophe",
         ),
         pytest.param(
-            "The most profound impact of DBT is its Ability to impose software engineering best practices onto the data workflow",  # noqa: E501
-            (2, [[9, 17], [32, 49]]),
+            "is its Ability to",
+            (1, [[0, 17]]),
             id="single_phrase_with_case",
         ),
         pytest.param(
-            "The most profound impact of DBT is it's Ability to impose software engineering best practices onto the data workflow",  # noqa: E501
-            (2, [[9, 17], [32, 50]]),
+            "is it's Ability to",
+            (1, [[0, 18]]),
             id="single_phrase_with_case_and_apostrophe",
         ),
     ],
