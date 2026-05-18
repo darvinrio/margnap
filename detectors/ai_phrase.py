@@ -63,6 +63,11 @@ AI_PHRASES: list[tuple[str, int | None]] = [
     ("robust", 5),
     ("invaluable", 7),
     ("is more than just", 7),
+    # history=43cd0cb7-94ed-4320-a979-527df6f5032b
+    ("resilience", 30),
+    # history=25cc4c4e-8442-4c93-87eb-26586ac532e0
+    ("on one of the most", 6),
+    ("blend", 6),
 ]
 
 
