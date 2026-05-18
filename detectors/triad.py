@@ -20,7 +20,8 @@ def find_triads(text: str) -> tuple[int, list[list[int]]]:
         - a list of their spans.
     """
     pattern = re.compile(
-        r"\b([^,\n]+?),\s+([^,\n]+?)\s+and\s+([^,\n.!?]+)\b", re.IGNORECASE
+        r"\b([a-zA-Z]+)\b\s*,\s+([a-zA-Z]+)\b\s*(?:and|,)\s+([a-zA-Z]+)\b",
+        re.IGNORECASE,
     )
 
     spans = [list(match.span()) for match in pattern.finditer(text)]
