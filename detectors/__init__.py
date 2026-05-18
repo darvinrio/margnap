@@ -4,8 +4,9 @@ __init__.py
 Detectors
 """
 
+from .ai_phrase import find_ai_phrases
 from .em_dash import find_em_dashes
 from .not_just_but import find_not_but_also
 from .triad import find_triads
 
-__all__ = ["find_em_dashes", "find_not_but_also", "find_triads"]
+__all__ = ["find_em_dashes", "find_not_but_also", "find_triads", "find_ai_phrases"]
