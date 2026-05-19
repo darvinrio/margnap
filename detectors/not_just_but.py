@@ -6,6 +6,34 @@ Detect "not ... but also ..."
 
 import re
 
+"""Defines the gap placeholder and its regex pattern for use in templates."""
+GAP = "..."
+GAP_REGEX = r".*?"
+
+TEMPLATES = [
+    ["that's not", GAP, "that's", GAP],
+    ["not", GAP, "but", GAP],
+]
+
+
+def template_to_regex(parts: list[str]) -> str:
+    """
+    Convert a template to a regex pattern that matches it as a whole word.
+
+    Args:
+        parts (list[str]): The template parts to convert.
+
+    Returns:
+        str: The regex pattern that matches the template as a whole word.
+    """
+    out = []
+    for part in parts:
+        if part == GAP:
+            out.append(GAP_REGEX)
+        else:
+            out.append(re.escape(part).replace(r"\ ", r"\s+"))
+    return "".join(out)
+
 
 def find_not_but_also(text: str) -> tuple[int, list[list[int]]]:
     """
@@ -20,7 +48,8 @@ def find_not_but_also(text: str) -> tuple[int, list[list[int]]]:
         - a list of their spans.
     """
     pattern = re.compile(
-        r"not\s+\s+.*?(?:,\s*)?but\s+also\s+.*?(?=[.!?]|$)", re.IGNORECASE | re.DOTALL
+        "|".join(f"(?:{template_to_regex(t)})" for t in TEMPLATES),
+        re.IGNORECASE | re.DOTALL,
     )
 
     spans = [list(match.span()) for match in pattern.finditer(text)]
