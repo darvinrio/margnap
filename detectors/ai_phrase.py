@@ -8,7 +8,7 @@ import re
 
 """
 AI Phrase and their frequency multiplier
-Frequency multiplier is the number of times its appears in AI text compared to Human text
+Frequency multiplier - number of times its appears in AI text compared to Human text
 """
 AI_PHRASES: list[tuple[str, int | None]] = [
     # from https://www.pangram.com/supporting-evidence#sig-ngrams
@@ -68,6 +68,13 @@ AI_PHRASES: list[tuple[str, int | None]] = [
     # history=25cc4c4e-8442-4c93-87eb-26586ac532e0
     ("on one of the most", 6),
     ("blend", 6),
+    # "Important note" - check variants like Important caveat
+    ("long after the final", 800),
+    # check these mate
+    # "it solved a real problem"
+    # "reveal a pattern"
+    # "hitting the same wall"
+    # 
 ]
 
 
