@@ -1,7 +1,7 @@
 """
 grpo/baseline.py
 
-Attempt at local fine-tuning
+mlx-tune inference and baseline evaluation
 """
 
 from typing import TYPE_CHECKING, cast
